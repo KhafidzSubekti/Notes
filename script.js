@@ -556,6 +556,7 @@ function renderMenu() {
 }
 
 function renderChips() {
+  if (!chips) return;
   const all = ["Semua", ...categories.map(category => category.name)];
   chips.innerHTML = all.map(category => `
     <button class="chip${category === activeCategory ? " active" : ""}" type="button" data-category="${category}">${category}</button>
@@ -595,7 +596,7 @@ function cardTemplate(link) {
 }
 
 function filteredLinks() {
-  const query = searchInput.value.trim().toLowerCase();
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
   return links.filter(link => {
     const categoryMatch = activeCategory === "Semua" || link.category === activeCategory;
     const queryText = `${link.label} ${link.category} ${link.section} ${link.description || ""}`.toLowerCase();
@@ -604,6 +605,7 @@ function filteredLinks() {
 }
 
 function renderLinks() {
+  if (!linksGrid || !emptyState) return;
   const data = filteredLinks();
   linksGrid.innerHTML = data.map(cardTemplate).join("");
   emptyState.hidden = data.length > 0;
@@ -642,7 +644,9 @@ function initTheme() {
   applyTheme(saved || preferred);
 }
 
-searchInput.addEventListener("input", renderLinks);
+if (searchInput) {
+  searchInput.addEventListener("input", renderLinks);
+}
 themeToggle.addEventListener("click", () => {
   const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
   applyTheme(next);
